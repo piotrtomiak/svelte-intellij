@@ -21,9 +21,22 @@ val SVELTE_HTML_TAG = SvelteHtmlTagElementType("SVELTE_HTML_TAG")
 
 // Check XmlTagImpl.createDelegate && HtmlTagDelegate if something breaks. Esp. HtmlTagDelegate.findSubTags
 class SvelteHtmlTag : XmlTagImpl(SVELTE_HTML_TAG), HtmlTag {
-    override fun processDeclarations(processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement): Boolean {
+    override fun processDeclarations(
+        processor: PsiScopeProcessor,
+        state: ResolveState,
+        lastParent: PsiElement?,
+        place: PsiElement
+    ): Boolean {
         for (attribute in attributes) {
             if (!attribute.name.startsWith("let:")) continue
+
+            val implicit = (attribute as SvelteHtmlAttribute).getShorthandLetImplicitParameter()
+            if (implicit != null) {
+                if (!processor.execute(implicit, ResolveState.initial())) {
+                    return false
+                }
+            }
+
             val value = attribute.valueElement ?: continue
             val parameter = PsiTreeUtil.findChildOfType(value, SvelteJSParameter::class.java) ?: continue
 

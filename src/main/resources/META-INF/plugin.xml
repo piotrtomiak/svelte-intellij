@@ -95,5 +95,8 @@
 
         <frameworkIndexingHandler implementation="dev.blachut.svelte.lang.SvelteFrameworkHandler" version="1"/>
         <indexedFileTypeProvider implementation="dev.blachut.svelte.lang.SvelteIndexedFileTypeProvider"/>
+
+        <textAttributesKeyProvider language="SvelteJS"
+                                   implementationClass="dev.blachut.svelte.lang.SvelteJSTextAttributeKeysProvider"/>
     </extensions>
 </idea-plugin>
