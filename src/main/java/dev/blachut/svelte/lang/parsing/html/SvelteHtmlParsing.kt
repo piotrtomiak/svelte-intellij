@@ -135,14 +135,17 @@ class SvelteHtmlParsing(builder: PsiBuilder) : ExtendableHtmlParsing(builder) {
         assert(token() === XmlTokenType.XML_NAME)
         val att = mark()
 
-        val elementType = when (builder.tokenText!!.startsWith("let:", true)) {
-            true -> SvelteJSLazyElementTypes.ATTRIBUTE_PARAMETER
-            false -> SvelteJSLazyElementTypes.ATTRIBUTE_EXPRESSION
-        }
+        val attributeName = builder.tokenText
+
         advance()
         if (token() === XmlTokenType.XML_EQ) {
             advance()
-            parseAttributeValue(elementType)
+            parseAttributeValue(
+                when (attributeName!!.startsWith("let:", true)) {
+                    true -> SvelteJSLazyElementTypes.ATTRIBUTE_PARAMETER
+                    false -> SvelteJSLazyElementTypes.ATTRIBUTE_EXPRESSION
+                }
+            )
         }
 
         att.done(SVELTE_HTML_ATTRIBUTE)
