@@ -17,11 +17,9 @@ import org.jetbrains.annotations.NonNls
 import java.util.*
 
 /**
- * Each Svelte component or special HTML tag has one instance bound. We can control for example completion of props here.
+ * TODO Consider using BaseXmlElementDescriptorImpl, there are cache implementations there
  *
- * @ TODO Consider caching instances of this
- * @ TODO Consider using BaseXmlElementDescriptorImpl, there are cache implementations there
- * @ TODO HtmlElementDescriptorImpl is used for example in HtmlUnknownTagInspectionBase: extending it could help or hinder code insight
+ * TODO HtmlElementDescriptorImpl is used for example in HtmlUnknownTagInspectionBase: extending it could help or hinder code insight
  */
 class SvelteComponentTagDescriptor(private val myName: String, private val myDeclaration: JSElement) : XmlElementDescriptor {
     override fun getName(context: PsiElement): String = name

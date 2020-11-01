@@ -58,11 +58,10 @@ class SvelteTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
 
         if (!isSvelteComponentTag(tag.name)) return null
 
-        val result = SvelteTagReference(tag).resolve()
+        val result = tag.reference?.resolve()
 
         if (result !is JSElement) return null
 
-        // TODO Look into caching SvelteComponentTagDescriptor in CachedValuesManager
         return SvelteComponentTagDescriptor(tag.name, result)
     }
 
