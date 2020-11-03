@@ -21,6 +21,7 @@ class SvelteUnresolvedComponentInspection : LocalInspectionTool() {
 
                 val componentName = tag.name
                 if (!isSvelteComponentTag(componentName)) return
+                // TODO rewrite
                 if (tag.descriptor?.declaration != null) return
 
                 val range = TextRange(1, tag.name.length + 1)

@@ -18,6 +18,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.xml.IXmlAttributeElementType
 import com.intellij.psi.xml.XmlElement
 import dev.blachut.svelte.lang.SvelteHTMLLanguage
+import dev.blachut.svelte.lang.codeInsight.ShorthandLocalReference
 
 class SvelteHtmlAttributeElementType(debugName: String) : IElementType(debugName, SvelteHTMLLanguage.INSTANCE),
     IXmlAttributeElementType
@@ -50,8 +51,12 @@ class SvelteHtmlAttribute : XmlAttributeImpl(SVELTE_HTML_ATTRIBUTE) {
     }
 
     override fun getReferences(hints: PsiReferenceService.Hints): Array<PsiReference> {
+        // todo parse directives and get TextRange + behavior
         if (name.startsWith("let:") && valueElement == null) {
-            return arrayOf(ShorthandLetReference(this, TextRange(4, textLength)))
+            return arrayOf(ShorthandLetReference(this, TextRange(4, nameElement.textLength)))
+        }
+        if (name.startsWith("use:")) {
+            return arrayOf(ShorthandLocalReference(this, TextRange(4, nameElement.textLength)))
         }
 
         return super.getReferences(hints)

@@ -4,7 +4,6 @@ import com.intellij.codeInsight.completion.PrioritizedLookupElement
 import com.intellij.codeInsight.completion.XmlTagInsertHandler
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.lang.javascript.psi.JSElement
 import com.intellij.psi.impl.source.xml.XmlElementDescriptorProvider
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
@@ -58,11 +57,7 @@ class SvelteTagProvider : XmlElementDescriptorProvider, XmlTagNameProvider {
 
         if (!isSvelteComponentTag(tag.name)) return null
 
-        val result = tag.reference?.resolve()
-
-        if (result !is JSElement) return null
-
-        return SvelteComponentTagDescriptor(tag.name, result)
+        return SvelteComponentTagDescriptor(tag.name, tag)
     }
 
     override fun addTagNameVariants(elements: MutableList<LookupElement>, tag: XmlTag, namespacePrefix: String) {

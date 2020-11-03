@@ -1,27 +1,26 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package dev.blachut.svelte.lang.completion
 
-import com.intellij.codeInsight.completion.CompletionParameters
-import com.intellij.codeInsight.completion.CompletionProvider
-import com.intellij.codeInsight.completion.CompletionResultSet
-import com.intellij.codeInsight.completion.PrioritizedLookupElement
+import com.intellij.codeInsight.completion.*
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.xml.XmlAttribute
 import com.intellij.psi.xml.XmlTag
 import com.intellij.util.ProcessingContext
+import dev.blachut.svelte.lang.codeInsight.DirectiveSupport
 import dev.blachut.svelte.lang.icons.SvelteIcons
 
 class SvelteAttributeNameCompletionProvider : CompletionProvider<CompletionParameters>() {
     override fun addCompletions(
         parameters: CompletionParameters,
         context: ProcessingContext,
-        result: CompletionResultSet
+        result: CompletionResultSet,
     ) {
         val xmlTag = PsiTreeUtil.getParentOfType(parameters.position, XmlTag::class.java, false)
-        val xmlAttribute = parameters.position.parent as? XmlAttribute
-        if (xmlTag == null || xmlAttribute == null) return
+        val attribute = parameters.position.parent as? XmlAttribute
+        if (xmlTag == null || attribute == null) return
 
         if (xmlTag.name == "script" && xmlTag.getAttribute("lang") == null) {
             result.addElement(createLookupElement("lang=\"ts\"", 100))
@@ -39,6 +38,10 @@ class SvelteAttributeNameCompletionProvider : CompletionProvider<CompletionParam
         if (xmlTag.name == "style" && xmlTag.getAttribute("src") == null) {
             result.addElement(createLookupElement("src"))
         }
+
+        val definition = DirectiveSupport.getDefinition(StringUtil.trimEnd(attribute.name,
+            CompletionUtilCore.DUMMY_IDENTIFIER_TRIMMED))
+        definition.shorthandCompletionFactory?.invoke(attribute, result)
     }
 
     private fun createLookupElement(text: String, priority: Int? = null): LookupElement {
